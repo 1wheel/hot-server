@@ -2,7 +2,8 @@
 !(function() {
   var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
   var address = protocol + window.location.host + window.location.pathname + 'ws';
-  var socket = new WebSocket(address);
+  // var socket = new WebSocket(address);
+  var socket = new WebSocket(location.origin.replace(/^http/, 'ws'))
   console.log(socket)
   socket.onmessage = function(msg) {
     console.log(msg)

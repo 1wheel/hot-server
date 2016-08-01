@@ -1,34 +1,16 @@
-// const express = require('express');
-// const SocketServer = require('ws').Server;
-
-// const wss = new SocketServer({ server });
-
-// wss.on('connection', (ws) => {
-//   console.log('Client connected');
-//   ws.on('close', () => console.log('Client disconnected'));
-// });
-
-// setInterval(() => {
-//   wss.clients.forEach((client) => {
-//     client.send(new Date().toTimeString());
-//   });
-// }, 1000);
-
-
-
 var fs = require('fs'),
     chokidar = require('chokidar'),
     serveStatic = require('serve-static'),
     serveIndex = require('serve-index'),
     express = require('express'),
-    SocketServer = require('ws').Server
+    SocketServer = require('ws')
 
 
-var server = express(),
+var app = express(),
     wsInject = fs.readFileSync(__dirname + '/ws-inject.html', 'utf8')
 
 
-server.get('*', function(req, res, next){
+app.get('*', function(req, res, next){
   try{
     var path = req.params[0].slice(1)
     if (path.slice(-1) == '/') path = path + '/index.html'
@@ -42,12 +24,12 @@ server.get('*', function(req, res, next){
 })
 
 
-server.use(serveStatic('./'))
+app.use(serveStatic('./'))
   .use('/', serveIndex('./', {'icons': true}))
   .listen(3000)
 
 
-var wss = new SocketServer({server})
+var wss = new SocketServer({server: app})
 wss.on('connection', (ws) => {
   console.log('Client connected');
   ws.on('close', () => console.log('Client disconnected'));
