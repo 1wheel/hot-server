@@ -1,11 +1,9 @@
 <script>
 !(function() {
-  var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
-  var address = protocol + window.location.host + window.location.pathname + 'ws';
-  // var socket = new WebSocket(address);
-  var socket = new WebSocket(location.origin.replace(/^http/, 'ws'))
-  console.log(socket)
-  socket.onmessage = function(msg) {
+  console.log('hot!')
+  var ws = new WebSocket(location.origin.replace(/^http/, 'ws'));
+
+  ws.onmessage = function(msg) {
     console.log(msg)
 
     msg.parsedData = JSON.parse(msg.data);
