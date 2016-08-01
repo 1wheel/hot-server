@@ -1,0 +1,28 @@
+<script>
+!(function() {
+  var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
+  var address = protocol + window.location.host + window.location.pathname + 'ws';
+  var socket = new WebSocket(address);
+  socket.onmessage = function(msg) {
+    msg.parsedData = JSON.parse(msg.data);
+    window.msg = msg;
+
+    if (msg.parsedData.type == 'jsInject') {
+      var script = document.createElement('script');
+      script.textContent = msg.parsedData.str;
+      (document.head || document.documentElement).appendChild(script);
+      script.remove();
+    }
+
+    if (msg.parsedData.type == 'cssInject') {
+      // not sure this is the best selector
+      // might break w/ multiple graphics on page? 
+      var styleNode = document.querySelector('.interactive-graphic style');
+      styleNode.textContent = msg.parsedData.str;
+    }
+
+
+  };
+  console.log('hot reload enabled.');
+})();
+</script>

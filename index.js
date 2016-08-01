@@ -1,36 +1,32 @@
 var fs = require("fs"),
     webSocket = require('faye-websocket'),
     chokidar = require('chokidar'),
-    finalhandler = require('finalhandler'),
-    http = require('http'),
     serveStatic = require('serve-static'),
     serveIndex = require('serve-index'),
     express = require('express')
 
 
-    /*
-    path = require("path"),
-    url = require("url"),
-    http = require("http"),
-    os = require("os"),
-    util = require("util"),
-    child = require("child_process",
-    d3 = require("d3"),
-    optimist = require("optimist"),
-    hogan = require("hogan.js"),
-    yaml = require("js-yaml"),
-    queue = require("queue-async"),
-    httpRequest = require("request"),
-    mkdirp = require("mkdirp");
-    */
-
-
-var express    = require('express')
-var serveIndex = require('serve-index')
+var wsInject = fs.readFileSync(__dirname + '/ws-inject.html', 'utf8')
 
 var app = express()
 
-// Serve URLs like /ftp/thing as public/ftp/thing
+
+app.get('*', function(req, res, next){
+  try{
+    var path = req.params[0].slice(1)
+    if (path.slice(-1) == '/') path = path + '/index.html'
+    if (path.slice(-5) != '.html') return next()
+
+    var html = fs.readFileSync(path, 'utf-8') + wsInject
+    console.log(html)
+    res.send(html)
+  } catch(e){
+    console.log(e)
+    next() 
+  }
+});
+
+
 app.use(serveStatic('./'))
 app.use('/', serveIndex('./', {'icons': true}))
 
@@ -39,33 +35,13 @@ app.listen(3000)
 
 
 
-// var index = serveIndex('./', {'icons': true})
-// var serve = serveStatic('./')
 
-// // Create server
-// var server = http.createServer(function onRequest(req, res){
-//   var done = finalhandler(req, res)
-//     console.log(req)
-//   serve(req, res, function onNext(err) {
-//     if (err) return done(err)
-//     index(req, res, done)
-//   })
-// })
-
-
-// // Listen
-// server.listen(3000)
-
-
-
-
-// initHot
 
 
 function initHot(server) {
   // websocket to inject script.js
   var WebSocket = require('faye-websocket'),
-    chokidar = require('chokidar')
+      chokidar = require('chokidar')
 
   server.on('upgrade', function(request, socket, body) {
   if (webSocket.isWebSocket(request)) {
