@@ -1,0 +1,24 @@
+{
+  "name": "hot-server",
+  "version": "0.0.1",
+  "description": "live-server with script injection",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/1wheel/hot-server.git"
+  },
+  "author": "Adam Pearce",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/1wheel/hot-server/issues"
+  },
+  "homepage": "https://github.com/1wheel/hot-server#readme",
+  "dependencies": {
+    "chokidar": "^1.6.0",
+    "connect": "^3.4.1",
+    "faye-websocket": "^0.11.0"
+  }
+}
