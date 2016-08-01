@@ -1,6 +1,12 @@
 var fs = require("fs"),
     webSocket = require('faye-websocket'),
     chokidar = require('chokidar'),
+    finalhandler = require('finalhandler'),
+    http = require('http'),
+    serveStatic = require('serve-static'),
+    serveIndex = require('serve-index'),
+    express = require('express')
+
 
     /*
     path = require("path"),
@@ -10,7 +16,6 @@ var fs = require("fs"),
     util = require("util"),
     child = require("child_process",
     d3 = require("d3"),
-    connect = require("connect"),
     optimist = require("optimist"),
     hogan = require("hogan.js"),
     yaml = require("js-yaml"),
@@ -20,8 +25,37 @@ var fs = require("fs"),
     */
 
 
-var server = connect();
-server.use(connect.static(__dirname), {maxAge: maxAgeMs})
+var express    = require('express')
+var serveIndex = require('serve-index')
+
+var app = express()
+
+// Serve URLs like /ftp/thing as public/ftp/thing
+app.use(serveStatic('./'))
+app.use('/', serveIndex('./', {'icons': true}))
+
+app.listen(3000)
+
+
+
+
+// var index = serveIndex('./', {'icons': true})
+// var serve = serveStatic('./')
+
+// // Create server
+// var server = http.createServer(function onRequest(req, res){
+//   var done = finalhandler(req, res)
+//     console.log(req)
+//   serve(req, res, function onNext(err) {
+//     if (err) return done(err)
+//     index(req, res, done)
+//   })
+// })
+
+
+// // Listen
+// server.listen(3000)
+
 
 
 
@@ -31,7 +65,7 @@ server.use(connect.static(__dirname), {maxAge: maxAgeMs})
 function initHot(server) {
   // websocket to inject script.js
   var WebSocket = require('faye-websocket'),
-    chokidar = require('chokidar');
+    chokidar = require('chokidar')
 
   server.on('upgrade', function(request, socket, body) {
   if (webSocket.isWebSocket(request)) {
