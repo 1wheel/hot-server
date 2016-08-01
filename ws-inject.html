@@ -1,11 +1,8 @@
 <script>
 !(function() {
-  console.log('hot!')
   var ws = new WebSocket(location.origin.replace(/^http/, 'ws'));
 
   ws.onmessage = function(msg) {
-    console.log(msg)
-
     msg.parsedData = JSON.parse(msg.data);
     window.msg = msg;
 
@@ -17,9 +14,9 @@
     }
 
     if (msg.parsedData.type == 'cssInject') {
-      // not sure this is the best selector
-      // might break w/ multiple graphics on page? 
-      var styleNode = document.querySelector('.interactive-graphic style');
+      
+      // might break w/ multiple style tags on the page
+      var styleNode = document.querySelector('style');
       styleNode.textContent = msg.parsedData.str;
     }
 

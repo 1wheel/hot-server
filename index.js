@@ -1,34 +1,29 @@
-const express = require('express')
-const SocketServer = require('ws').Server
-const path = require('path')
-const fs = require('fs')
-const serveStatic = require('serve-static')
-const serveIndex = require('serve-index')
+var express = require('express')
+var serveStatic = require('serve-static')
+var serveIndex = require('serve-index')
+var SocketServer = require('ws').Server
 
+var fs = require('fs')
+var chokidar = require('chokidar')
 
-const PORT = process.env.PORT || 3000
+var PORT = process.env.PORT || 3000
 
-const server = express()
+var server = express()
   .get('*', injectHTML)
   .use(serveStatic('./'))
   .use('/', serveIndex('./', {'icons': true}))
   .listen(PORT, () => console.log(`Listening on ${ PORT }`))
 
 
-const wss = new SocketServer({ server })
+var wss = new SocketServer({ server })
 
 wss.on('connection', (ws) => {
   console.log('Client connected')
   ws.on('close', () => console.log('Client disconnected'))
 })
 
-setInterval(() => {
-  wss.clients.forEach((client) => {
-    client.send(new Date().toTimeString())
-  })
-}, 100)
 
-
+var wsInject = fs.readFileSync(__dirname + '/ws-inject.html', 'utf8')
 function injectHTML(req, res, next){
   try{
     var path = req.params[0].slice(1)
@@ -43,3 +38,23 @@ function injectHTML(req, res, next){
 }
 
 
+
+chokidar.watch(['./'], {ignored: /[\/\\]\./ }).on('all', function(event, path) {
+  if (event != 'change') return
+  console.log('updating ' + path)
+
+  if (~path.indexOf('script.js')){
+    var msg = {type: 'jsInject', str: fs.readFileSync(path, 'utf8')}
+    sendToAllClients(msg)
+  }
+
+  if (~path.indexOf('style.css')){
+    var msg = {type: 'cssInject', str: fs.readFileSync(path, 'utf8')}
+    sendToAllClients(msg)
+  }
+})
+
+//todo - only send to active clients that have load the linked find before
+function sendToAllClients(msg){
+  wss.clients.forEach(d => d.send(JSON.stringify(msg)))
+}
