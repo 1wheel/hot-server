@@ -4,20 +4,18 @@
   var ws = new WebSocket(location.origin.replace(/^http/, 'ws'))
 
   ws.onmessage = function(msg) {
-    msg.parsedData = JSON.parse(msg.data)
+    var parsedData = JSON.parse(msg.data)
 
-    if (msg.parsedData.type == 'jsInject') {
+    if (parsedData.type == 'jsInject') {
       var script = document.createElement('script')
-      script.textContent = msg.parsedData.str
-      (document.head || document.documentElement).appendChild(script)
+      script.textContent = parsedData.str
+      document.head.appendChild(script)
       script.remove()
     }
 
-    if (msg.parsedData.type == 'cssInject') {
-      // replace contents of first style tag with injected css
-      // will break w/ multiple style tags on the page
-      var styleNode = document.querySelector('style')
-      styleNode.textContent = msg.parsedData.str
+    if (parsedData.type == 'cssInject') {
+      var linkNodes = document.getElementsByTagName('link')
+      Array.prototype.forEach.call(linkNodes, function(d){ d.href = d.href })
     }
   }
 

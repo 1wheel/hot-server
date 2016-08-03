@@ -10,7 +10,10 @@
     "type": "git",
     "url": "git+https://github.com/1wheel/hot-server.git"
   },
-  "author": "Adam Pearce",
+  "author": {
+    "name": "Adam Pearce",
+    "url": "http://roadtolarissa.com/"
+  },
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/1wheel/hot-server/issues"
