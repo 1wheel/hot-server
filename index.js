@@ -5,24 +5,25 @@ var SocketServer = require('ws').Server
 
 var fs = require('fs')
 var chokidar = require('chokidar')
+var child = require("child_process");
 
+// set up express static server with a websocket
 var PORT = process.env.PORT || 3000
 
 var server = express()
   .get('*', injectHTML)
   .use(serveStatic('./'))
   .use('/', serveIndex('./', {'icons': true}))
-  .listen(PORT, () => console.log(`http:\/\/localhost:${PORT}`))
-
+  .listen(PORT, () => child.exec("open http://localhost:" + PORT))
 
 var wss = new SocketServer({ server })
-
 wss.on('connection', (ws) => {
   console.log('Client connected')
   ws.on('close', () => console.log('Client disconnected'))
 })
 
 
+// append websocket/injecter script to all html pages served 
 var wsInject = fs.readFileSync(__dirname + '/ws-inject.html', 'utf8')
 function injectHTML(req, res, next){
   try{
@@ -38,6 +39,7 @@ function injectHTML(req, res, next){
 }
 
 
+// if a .js or .css files changes, load and send to client via websocket
 chokidar.watch(['./'], {ignored: /[\/\\]\./ }).on('all', function(event, path) {
   if (event != 'change') return
   console.log('updating ' + path)
@@ -53,7 +55,7 @@ chokidar.watch(['./'], {ignored: /[\/\\]\./ }).on('all', function(event, path) {
   }
 })
 
-//todo - only send to active clients that have loaded the linked find before
+// todo - only send to active clients that have loaded the linked find before
 function sendToAllClients(msg){
   wss.clients.forEach(d => d.send(JSON.stringify(msg)))
 }

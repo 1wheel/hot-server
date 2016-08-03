@@ -1,10 +1,10 @@
+<!-- hot-server appends this snippit to inject code via a websock  -->
 <script>
 !(function() {
   var ws = new WebSocket(location.origin.replace(/^http/, 'ws'))
 
   ws.onmessage = function(msg) {
     msg.parsedData = JSON.parse(msg.data)
-    window.msg = msg
 
     if (msg.parsedData.type == 'jsInject') {
       var script = document.createElement('script')
@@ -14,12 +14,13 @@
     }
 
     if (msg.parsedData.type == 'cssInject') {
+      // replace contents of first style tag with injected css
       // will break w/ multiple style tags on the page
       var styleNode = document.querySelector('style')
       styleNode.textContent = msg.parsedData.str
     }
   }
-  
+
   console.log('hot reload enabled.')
 })()
 </script>
