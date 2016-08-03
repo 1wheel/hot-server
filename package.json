@@ -1,6 +1,6 @@
 {
   "name": "hot-server",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "live-server with script injection",
   "main": "index.js",
   "scripts": {
@@ -17,6 +17,9 @@
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/1wheel/hot-server/issues"
+  },
+  "bin": {
+    "hot-server": "./index.js"
   },
   "homepage": "https://github.com/1wheel/hot-server#readme",
   "dependencies": {
