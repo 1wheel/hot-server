@@ -12,7 +12,7 @@ var server = express()
   .get('*', injectHTML)
   .use(serveStatic('./'))
   .use('/', serveIndex('./', {'icons': true}))
-  .listen(PORT, () => console.log(`Listening on ${ PORT }`))
+  .listen(PORT, () => console.log(`http:\/\/localhost:${PORT}`))
 
 
 var wss = new SocketServer({ server })
@@ -38,23 +38,22 @@ function injectHTML(req, res, next){
 }
 
 
-
 chokidar.watch(['./'], {ignored: /[\/\\]\./ }).on('all', function(event, path) {
   if (event != 'change') return
   console.log('updating ' + path)
 
-  if (~path.indexOf('script.js')){
+  if (~path.indexOf('.js')){
     var msg = {type: 'jsInject', str: fs.readFileSync(path, 'utf8')}
     sendToAllClients(msg)
   }
 
-  if (~path.indexOf('style.css')){
+  if (~path.indexOf('.css')){
     var msg = {type: 'cssInject', str: fs.readFileSync(path, 'utf8')}
     sendToAllClients(msg)
   }
 })
 
-//todo - only send to active clients that have load the linked find before
+//todo - only send to active clients that have loaded the linked find before
 function sendToAllClients(msg){
   wss.clients.forEach(d => d.send(JSON.stringify(msg)))
 }
