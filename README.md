@@ -1,8 +1,6 @@
 # hot-server
 No config hot reloading for sketching [bl.ocks](http://bl.ocks.org/) quickly. 
 
-tktk explanation gif
-
 ## Instructions 
 
 Install: 
@@ -14,16 +12,16 @@ Serve directory statically:
 Open:
 `http://localhost:3000/`
 
-Save changes to `*.js` or `*.css` and they'll be injected via a websocket without a full referesh.
+Save changes to `*.js` or `*.css` and they'll be injected via a websocket without a full refresh.
 
-Since your whole script file reruns, you'll probably want to clean up anything that might be on the page with something like `var svg = d3.select('#graph').html('').append('svg')`. Stopping any timers and clearing any listeners that don't reset is also a good idea:
+Since your whole script file reruns, you'll probably want to clean up anything it adds to the page with something like `var svg = d3.select('#graph').html('').append('svg')`. Stopping any timers and clearing any listeners that don't reset is also a good idea:
 
     if (window.timer) timer.stop()
     window.timer = d3.timer(function(t){
       // cool animation code
     })
 
-To persist data between refreshes, declare and initialize your data in a separate file from the rest of your code. Only the changed file will update.
+To persist data between refreshes, declare and initialize your data in a separate file from the rest of your code. Only the changed file will rerun.
 
 ## Is this the right tool for me?
 
