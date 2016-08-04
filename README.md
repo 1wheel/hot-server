@@ -3,14 +3,11 @@ No config hot reloading for sketching [bl.ocks](http://bl.ocks.org/) quickly.
 
 ## Instructions 
 
-Install: 
-`npm install -g hot-server`
+##### Install: 
+`> npm install -g hot-server`
 
-Serve directory statically:
-`hot-server`
-
-Open:
-`http://localhost:3000/`
+##### Serve directory statically:
+`> hot-server`
 
 Save changes to `*.js` or `*.css` and they'll be injected via a websocket without a full refresh.
 
