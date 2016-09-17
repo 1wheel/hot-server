@@ -1,6 +1,6 @@
 {
   "name": "hot-server",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "live-server with script injection",
   "main": "index.js",
   "scripts": {
@@ -25,7 +25,7 @@
   "dependencies": {
     "chokidar": "^1.6.0",
     "express": "^4.14.0",
-    "meow": "^3.7.0",
+    "minimist": "^1.2.0",
     "serve-index": "^1.8.0",
     "serve-static": "^1.11.1",
     "ws": "^1.1.1"

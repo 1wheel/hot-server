@@ -3,10 +3,10 @@ No config hot reloading for sketching [bl.ocks](http://bl.ocks.org/) quickly.
 
 ## Instructions 
 
-##### Install: 
+### Install: 
 `> npm install -g hot-server`
 
-##### Serve directory statically:
+### Serve directory statically:
 `> hot-server`
 
 Save changes to `*.js` or `*.css` and they'll be injected via a websocket without a full refresh.
@@ -19,6 +19,8 @@ Since your whole script file reruns, you'll probably want to clean up anything i
     })
 
 To persist data between refreshes, declare and initialize your data in a separate file from the rest of your code. Only the changed file will rerun.
+
+Default port is 3000; `> hot-server --port=4444` sets the port.
 
 ## Is this the right tool for me?
 
