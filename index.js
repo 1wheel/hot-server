@@ -4,19 +4,56 @@ var express = require('express')
 var serveStatic = require('serve-static')
 var serveIndex = require('serve-index')
 var SocketServer = require('ws').Server
+var meow = require('meow');
 
 var fs = require('fs')
 var chokidar = require('chokidar')
 var child = require("child_process");
 
+var cli = meow(`
+  Usage:
+
+    $ hot-server <path> [--port 3000]
+
+  Options:
+
+    --port, -p   Set the port to use (default: 3000)
+    --help, -h   This screen
+
+  Examples:
+
+    $ hot-server
+
+      Loads index.html on port 3000
+
+    $ hot-server test.html -p 5554
+
+      Loads test.html on port 5554
+`, {
+  alias: {
+    p: 'port'
+  }
+})
+
 // set up express static server with a websocket
-var PORT = process.env.PORT || 3000
+var PORT = cli.flags.port || process.env.PORT || 3000
+var PATH = cli.input;
 
 var server = express()
   .get('*', injectHTML)
   .use(serveStatic('./'))
   .use('/', serveIndex('./', {'icons': true}))
-  .listen(PORT, () => child.exec("open http://localhost:" + PORT))
+  .listen(PORT);
+
+process.on('uncaughtException', function(err){
+  if (err.errno === 'EADDRINUSE') {
+    PORT++; // Increment port until it finds one not in use.
+    server.listen(PORT);
+  }
+});
+
+server.on('listening', () => child.exec("open http://localhost:" + PORT + (PATH ? '/' + PATH : '')));
+
 
 var wss = new SocketServer({ server })
 wss.on('connection', (ws) => {
@@ -25,7 +62,7 @@ wss.on('connection', (ws) => {
 })
 
 
-// append websocket/injecter script to all html pages served 
+// append websocket/injecter script to all html pages served
 var wsInject = fs.readFileSync(__dirname + '/ws-inject.html', 'utf8')
 function injectHTML(req, res, next){
   try{
@@ -36,7 +73,7 @@ function injectHTML(req, res, next){
     var html = fs.readFileSync(path, 'utf-8') + wsInject
     res.send(html)
   } catch(e){
-    next() 
+    next()
   }
 }
 
