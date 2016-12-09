@@ -49,13 +49,15 @@ chokidar.watch(['./'], {ignored: /[\/\\]\./ }).on('all', function(event, path){
   console.log('updating ' + path)
 
   if (~path.indexOf('.js')){
-    var msg = {type: 'jsInject', str: fs.readFileSync(path, 'utf8')}
-    sendToAllClients(msg)
+    sendToAllClients({type: 'jsInject', str: fs.readFileSync(path, 'utf8')})
   }
 
   if (~path.indexOf('.css')){
-    var msg = {type: 'cssInject', str: fs.readFileSync(path, 'utf8')}
-    sendToAllClients(msg)
+    sendToAllClients({type: 'cssInject', str: fs.readFileSync(path, 'utf8')})
+  }
+
+  if (~path.indexOf('.html')){
+    sendToAllClients({type: 'reload', str: path})
   }
 })
 

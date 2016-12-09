@@ -17,6 +17,8 @@
       var linkNodes = document.getElementsByTagName('link')
       Array.prototype.forEach.call(linkNodes, function(d){ d.href = d.href })
     }
+
+    if (parsedData.type == 'reload') location.reload()
   }
 
   console.log('hot reload enabled.')
