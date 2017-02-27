@@ -6,7 +6,7 @@ var serveIndex = require('serve-index')
 var SocketServer = require('ws').Server
 var fs = require('fs')
 var chokidar = require('chokidar')
-var child = require("child_process")
+var child = require('child_process')
 
 // set up express static server with a websocket
 var argv = require('minimist')(process.argv.slice(2))
@@ -17,15 +17,15 @@ var server = express()
   .use(serveStatic('./'))
   .use('/', serveIndex('./', {'icons': true}))
   .listen(PORT)
-server.on('listening', () => child.exec("open http://localhost:" + PORT))
+server.on('listening', () => child.exec('open http://localhost:' + PORT))
   
 process.on('uncaughtException', (err => 
   err.errno == 'EADDRINUSE' ? server.listen(++PORT) : 0)) //inc PORT if in use
 
 var wss = new SocketServer({ server })
 wss.on('connection', (ws) => {
-  console.log('Client connected')
-  ws.on('close', () => console.log('Client disconnected'))
+  console.log('client connected')
+  ws.on('close', () => console.log('client disconnected'))
 })
 
 // append websocket/injecter script to all html pages served
@@ -34,6 +34,7 @@ function injectHTML(req, res, next){
   try{
     var path = req.params[0].slice(1)
     if (path.slice(-1) == '/') path = path + '/index.html'
+    if (path == '') path = 'index.html'
     if (path.slice(-5) != '.html') return next()
 
     var html = fs.readFileSync(path, 'utf-8') + wsInject
@@ -44,24 +45,23 @@ function injectHTML(req, res, next){
 }
 
 // if a .js or .css files changes, load and send to client via websocket
-chokidar.watch(['./'], {ignored: /[\/\\]\./ }).on('all', function(event, path){
+chokidar.watch(['.'], {ignored: /[\/\\]\./ }).on('all', function(event, path){
   if (event != 'change') return
-  console.log('updating ' + path)
 
-  if (~path.indexOf('.js')){
+  if (path.contains('.js')){
     sendToAllClients({type: 'jsInject', str: fs.readFileSync(path, 'utf8')})
   }
 
-  if (~path.indexOf('.css')){
+  if (path.contains('.css')){
     sendToAllClients({type: 'cssInject', str: fs.readFileSync(path, 'utf8')})
   }
 
-  if (~path.indexOf('.html')){
+  if (path.contains('.html')){
     sendToAllClients({type: 'reload', str: path})
   }
 })
 
-// todo - only send to active clients that have loaded the linked find before
+// todo - only send to active clients that have loaded the linked file before
 function sendToAllClients(msg){
   wss.clients.forEach(d => d.send(JSON.stringify(msg)))
 }
