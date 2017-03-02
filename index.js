@@ -44,8 +44,6 @@ function injectHTML(req, res, next){
   }
 }
 
-console.log('asdfasdf')
-
 // if a .js or .css files changes, load and send to client via websocket
 chokidar.watch(['.'], {ignored: /[\/\\]\./ }).on('all', function(event, path){
   if (event != 'change') return
