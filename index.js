@@ -44,19 +44,21 @@ function injectHTML(req, res, next){
   }
 }
 
+console.log('asdfasdf')
+
 // if a .js or .css files changes, load and send to client via websocket
 chokidar.watch(['.'], {ignored: /[\/\\]\./ }).on('all', function(event, path){
   if (event != 'change') return
 
-  if (path.contains('.js')){
+  if (path.includes('.js')){
     sendToAllClients({type: 'jsInject', str: fs.readFileSync(path, 'utf8')})
   }
 
-  if (path.contains('.css')){
+  if (path.includes('.css')){
     sendToAllClients({type: 'cssInject', str: fs.readFileSync(path, 'utf8')})
   }
 
-  if (path.contains('.html')){
+  if (path.includes('.html')){
     sendToAllClients({type: 'reload', str: path})
   }
 })
