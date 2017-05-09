@@ -45,7 +45,7 @@ function injectHTML(req, res, next){
 }
 
 // if a .js or .css files changes, load and send to client via websocket
-chokidar.watch(['.'], {ignored: /[\/\\]\./ }).on('all', function(event, path){
+chokidar.watch(['.'], {ignored: /node_modules|\.git|[\/\\]\./ }).on('all', function(event, path){
   if (event != 'change') return
 
   if (path.includes('.js')){
