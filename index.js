@@ -10,7 +10,7 @@ var child = require('child_process')
 
 // set up express static server with a websocket
 var argv = require('minimist')(process.argv.slice(2))
-var PORT = argv.port || 3000
+var PORT = argv.port || 8391
 
 var server = express()
   .get('*', injectHTML)

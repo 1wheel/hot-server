@@ -25,7 +25,7 @@ To persist data between refreshes, declare and initialize your data in a separat
           return [Math.random() * width, Math.random() * height]
         })
 
-Default port is 3000; `hot-server --port=4444` sets the port.
+Default port is 8391; `hot-server --port=4444` sets the port.
 
 ## Is this the right tool for me?
 
