@@ -48,17 +48,14 @@ function injectHTML(req, res, next){
 chokidar.watch(['.'], {ignored: /node_modules|\.git|[\/\\]\./ }).on('all', function(event, path){
   if (event != 'change') return
 
-  if (path.includes('.js')){
-    sendToAllClients({type: 'jsInject', str: fs.readFileSync(path, 'utf8')})
-  }
+  var str = fs.readFileSync(path, 'utf8')
+  var path = '/' + path.replace(__dirname, '')
 
-  if (path.includes('.css')){
-    sendToAllClients({type: 'cssInject', str: fs.readFileSync(path, 'utf8')})
-  }
+  var type = 'reload'
+  if (path.includes('.js'))  type = 'jsInject'
+  if (path.includes('.css')) type = 'cssInject'
 
-  if (path.includes('.html')){
-    sendToAllClients({type: 'reload', str: path})
-  }
+  sendToAllClients({path, type, str})
 })
 
 // todo - only send to active clients that have loaded the linked file before
