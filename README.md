@@ -20,12 +20,12 @@ Since your whole script file reruns, you'll probably want to clean up anything i
 
 To persist data between refreshes, declare and initialize your data in a separate file from the rest of your code. Only the changed file will rerun. Or only initialize your data on the first run:
 
-    window.sites = window.sites || d3.range(50)
+    window.points = window.points || d3.range(50)
         .map(function(d){
           return [Math.random() * width, Math.random() * height]
         })
 
-Default port is 8391; `hot-server --port=4444` sets the port.
+Default port is 3989; `hot-server --port=4444` sets the port.
 
 ## Is this the right tool for me?
 
