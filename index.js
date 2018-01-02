@@ -17,16 +17,11 @@ var server = express()
   .use(serveStatic('./'))
   .use('/', serveIndex('./', {'icons': true}))
   .listen(PORT)
-server.on('listening', () => child.exec('open http://localhost:' + PORT))
+  .on('listening', () => child.exec('open http://localhost:' + PORT))
   
 process.on('uncaughtException', (err => 
   err.errno == 'EADDRINUSE' ? server.listen(++PORT) : 0)) //inc PORT if in use
 
-var wss = new SocketServer({ server })
-wss.on('connection', (ws) => {
-  console.log('client connected')
-  ws.on('close', () => console.log('client disconnected'))
-})
 
 // append websocket/injecter script to all html pages served
 var wsInject = fs.readFileSync(__dirname + '/ws-inject.html', 'utf8')
@@ -45,20 +40,29 @@ function injectHTML(req, res, next){
 }
 
 // if a .js or .css files changes, load and send to client via websocket
-chokidar.watch(['.'], {ignored: /node_modules|\.git|[\/\\]\./ }).on('all', function(event, path){
-  if (event != 'change') return
+var wss = new SocketServer({server})
 
-  var str = fs.readFileSync(path, 'utf8')
-  var path = '/' + path.replace(__dirname, '')
+chokidar
+  .watch(['.'], {ignored: /node_modules|\.git|[\/\\]\./ })
+  .on('change', (event, path) => {
+    if (event != 'change') return
 
-  var type = 'reload'
-  if (path.includes('.js'))  type = 'jsInject'
-  if (path.includes('.css')) type = 'cssInject'
+    var str = fs.readFileSync(path, 'utf8')
+    var path = '/' + path.replace(__dirname, '')
 
-  sendToAllClients({path, type, str})
+    var type = 'reload'
+    if (path.includes('.js'))  type = 'jsInject'
+    if (path.includes('.css')) type = 'cssInject'
+
+    var msg = {path, type, str}
+    wss.clients.forEach(d => d.send(JSON.stringify(msg)))
+  })
+
+
+
+
+wss.on('connection', (ws) => {
+  console.log('client connected')
+  ws.on('close', () => console.log('client disconnected'))
 })
 
-// todo - only send to active clients that have loaded the linked file before
-function sendToAllClients(msg){
-  wss.clients.forEach(d => d.send(JSON.stringify(msg)))
-}
