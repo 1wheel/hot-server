@@ -22,7 +22,6 @@ var server = express()
 process.on('uncaughtException', (err => 
   err.errno == 'EADDRINUSE' ? server.listen(++PORT) : 0)) //inc PORT if in use
 
-
 // append websocket/injecter script to all html pages served
 var wsInject = fs.readFileSync(__dirname + '/ws-inject.html', 'utf8')
 function injectHTML(req, res, next){
@@ -44,9 +43,7 @@ var wss = new SocketServer({server})
 
 chokidar
   .watch(['.'], {ignored: /node_modules|\.git|[\/\\]\./ })
-  .on('change', (event, path) => {
-    if (event != 'change') return
-
+  .on('change', path => {
     var str = fs.readFileSync(path, 'utf8')
     var path = '/' + path.replace(__dirname, '')
 
