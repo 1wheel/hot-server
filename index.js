@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-
 var express = require('express')
 var serveStatic = require('serve-static')
 var serveIndex = require('serve-index')
@@ -7,15 +6,13 @@ var SocketServer = require('ws').Server
 var fs = require('fs')
 var chokidar = require('chokidar')
 var child = require('child_process')
+var PORT = require('minimist')(process.argv.slice(2)).port || 3989
 
 // set up express static server with a websocket
-var argv = require('minimist')(process.argv.slice(2))
-var PORT = argv.port || 3989
-
 var server = express()
   .get('*', injectHTML)
   .use(serveStatic('./'))
-  .use('/', serveIndex('./', {'icons': true}))
+  .use('/', serveIndex('./'))
   .listen(PORT)
   .on('listening', () => child.exec('open http://localhost:' + PORT))
   
@@ -31,16 +28,12 @@ function injectHTML(req, res, next){
     if (path == '') path = 'index.html'
     if (path.slice(-5) != '.html') return next()
 
-    var html = fs.readFileSync(path, 'utf-8') + wsInject
-    res.send(html)
-  } catch(e){
-    next()
-  }
+    res.send(fs.readFileSync(path, 'utf-8') + wsInject)
+  } catch(e){ next() }
 }
 
 // if a .js or .css files changes, load and send to client via websocket
 var wss = new SocketServer({server})
-
 chokidar
   .watch(['.'], {ignored: /node_modules|\.git|[\/\\]\./ })
   .on('change', path => {
@@ -54,12 +47,3 @@ chokidar
     var msg = {path, type, str}
     wss.clients.forEach(d => d.send(JSON.stringify(msg)))
   })
-
-
-
-
-wss.on('connection', (ws) => {
-  console.log('client connected')
-  ws.on('close', () => console.log('client disconnected'))
-})
-
