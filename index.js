@@ -35,7 +35,7 @@ function injectHTML(req, res, next){
 // if a .js or .css files changes, load and send to client via websocket
 var wss = new SocketServer({server})
 chokidar
-  .watch(['.'], {ignored: /node_modules|\.git|[\/\\]\./ })
+  .watch('.', {ignored: /node_modules|\.git|[\/\\]\./ })
   .on('change', path => {
     var str = fs.readFileSync(path, 'utf8')
     var path = '/' + path.replace(__dirname, '')

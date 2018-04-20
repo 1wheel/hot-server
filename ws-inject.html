@@ -1,27 +1,14 @@
 <!-- hot-server appends this snippit to inject code via a websock  -->
 <script>
-!(function() {
-  var ws = new WebSocket(location.origin.replace(/^http/, 'ws'))
+new WebSocket(location.origin.replace(/^http/, 'ws')).onmessage = msg => {
+  var {path, type, str} = JSON.parse(msg.data)
 
-  ws.onmessage = function(msg) {
-    var {path, type, str} = JSON.parse(msg.data)
-
-    if (type == 'jsInject') {
-      var script = document.createElement('script')
-      script.textContent = str
-      document.head.appendChild(script)
-      script.remove()
-    }
-
-    if (type == 'cssInject') {
-      document.querySelectorAll('link').forEach(d => {
-        if (d.href.includes(path)) d.href = d.href
-      })
-    }
-
-    if (type == 'reload') location.reload()
+  if (type == 'reload') location.reload()
+  if (type == 'jsInject') eval(str)
+  if (type == 'cssInject') {
+    Array.from(document.querySelectorAll('link'))
+      .filter(d => d.href.includes(path))
+      .forEach(d => d.href = d.href)
   }
-
-  console.log('hot reload enabled')
-})()
+}
 </script>
