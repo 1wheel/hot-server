@@ -45,4 +45,4 @@ Or a even a different language:
 
 But! If you're mostly working on [short, simple pieces](http://roadtolarissa.com/) and dislike yak shaving config files this might be a good fit. It is as simple to use as `python -m http.server` with the added benefit of seemly magically updating pages without a refresh.  
 
-The code is also relatively simple - just 50 lines of code for the server and 10 for the client - and you might be able to re-purpose it. I incorporated a modified version into a slow `make/requirejs/grunt` build system at work and reduced the time it took to see the result of changing my code from ~6 seconds to 0. 
+The implementation is also  simple—just 50 lines of code for the server and 10 for the client—and you might be able to re-purpose it. I incorporated a modified version into a slow `make/requirejs/grunt` build system at work and reduced the time it took to see the result of changing my code from ~6 seconds to 0. 
