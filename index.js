@@ -7,6 +7,7 @@ var fs = require('fs')
 var chokidar = require('chokidar')
 var child = require('child_process')
 var PORT = require('minimist')(process.argv.slice(2)).port || 3989
+var PATH = require('minimist')(process.argv.slice(2)).path || '';
 
 // set up express static server with a websocket
 var server = express()
@@ -14,7 +15,7 @@ var server = express()
   .use(serveStatic('./'))
   .use('/', serveIndex('./'))
   .listen(PORT)
-  .on('listening', () => child.exec('open http://localhost:' + PORT))
+  .on('listening', () => child.exec('open http://localhost:' + PORT + '/' + PATH))
   
 process.on('uncaughtException', (err => 
   err.errno == 'EADDRINUSE' ? server.listen(++PORT) : 0)) //inc PORT if in use
