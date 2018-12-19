@@ -1,5 +1,5 @@
 {
-  "name": "hot-server",
+  "name": "hot-server-poll",
   "version": "0.0.16",
   "description": "live-server with script injection",
   "main": "index.js",
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/1wheel/hot-server.git"
+    "url": "git+https://github.com/1wheel/hot-server.git/tree/hot-server-poll"
   },
   "author": {
     "name": "Adam Pearce",
@@ -19,7 +19,7 @@
     "url": "https://github.com/1wheel/hot-server/issues"
   },
   "bin": {
-    "hot-server": "./index.js"
+    "hot-server-poll": "./index.js"
   },
   "homepage": "https://github.com/1wheel/hot-server#readme",
   "dependencies": {

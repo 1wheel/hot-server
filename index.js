@@ -2,14 +2,16 @@
 var express = require('express')
 var serveStatic = require('serve-static')
 var serveIndex = require('serve-index')
-var SocketServer = require('ws').Server
 var fs = require('fs')
 var chokidar = require('chokidar')
 var child = require('child_process')
 var PORT = require('minimist')(process.argv.slice(2)).port || 3989
 
+var updateMsg = {time: +(new Date())}
+
 // set up express static server with a websocket
 var server = express()
+  .get('/__hot-server-update', (req, res) => res.send(JSON.stringify(updateMsg)))
   .get('*', injectHTML)
   .use(serveStatic('./'))
   .use('/', serveIndex('./'))
@@ -33,10 +35,11 @@ function injectHTML(req, res, next){
 }
 
 // if a .js or .css files changes, load and send to client via websocket
-var wss = new SocketServer({server})
+
 chokidar
   .watch('.', {ignored: /node_modules|\.git|[\/\\]\./ })
   .on('change', path => {
+    console.log(path)
     var str = fs.readFileSync(path, 'utf8')
     var path = '/' + path.replace(__dirname, '')
 
@@ -44,6 +47,5 @@ chokidar
     if (path.includes('.js'))  type = 'jsInject'
     if (path.includes('.css')) type = 'cssInject'
 
-    var msg = {path, type, str}
-    wss.clients.forEach(d => d.send(JSON.stringify(msg)))
+    updateMsg = {path, type, str, time: +(new Date())}
   })
