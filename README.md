@@ -1,6 +1,8 @@
-# hot-server
+# hot-server-poll
 
 No config [hot reloading](https://roadtolarissa.com/hot-reload/) for sketching with code. 
+
+This version using polling, which will work where websockets are blocked.
 
 ## Instructions 
 
