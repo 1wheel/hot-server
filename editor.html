@@ -6,7 +6,7 @@
 <link rel="stylesheet" href="node_modules/codemirror/lib/codemirror.css">
 <link rel="stylesheet" href="node_modules/codemirror/addon/fold/foldgutter.css">
 <link rel="stylesheet" href="node_modules/codemirror/addon/dialog/dialog.css">
-<link rel="stylesheet" href="node_modules/codemirror/theme/monokai.css">
+<link rel="stylesheet" href="node_modules/codemirror/theme/mbo.css">
 
 <script src="node_modules/codemirror/lib/codemirror.js"></script>
 <script src="node_modules/codemirror/addon/search/searchcursor.js"></script>
@@ -42,19 +42,74 @@
 <div id='code-container'></div>
 
 <script>
-  var value = "// The bindings defined specifically in the Sublime Text mode\nvar bindings = {\n}";
+
+!(async function(){
+
+  var path = (new URLSearchParams(window.location.search)).get('hotEditorPath')
+  if (!path) path = 'https://roadtolarissa.com/worlds-group-2018/script.js'
+  console.log({path})
+
+  var value = await(await fetch(path)).text()
+
+  var type = _.last(path.split('.'))
+
   var cm = CodeMirror(d3.select('#code-container').node(), {
-    value: value,
+    value,
     lineNumbers: true,
-    mode: "javascript",
+    mode: "javascript", // TODO html/css
     keyMap: "sublime",
     autoCloseBrackets: true,
     matchBrackets: true,
     showCursorWhenSelecting: true,
-    theme: "monokai",
+    theme: "mbo",
     tabSize: 2
-  });
+  })
+
+  // send update on save
+  var bc = new BroadcastChannel('file_update')
+
+  d3.select(window).on('keydown', () => {
+    if (!event.ctrlKey && !event.metaKey) return
+    if (String.fromCharCode(event.which).toLowerCase() != 's') return
+
+    event.preventDefault()
+
+    var msg = {path, type, str: cm.getValue()}
+    bc.postMessage(msg)
+
+    // write to disk
+
+    fetch("/save", {
+      method: "POST",
+      body: JSON.stringify(msg)
+    })
+
+    // TODO only remove changed title after  
+  })
+
+  bc.onmessage = d => console.log(d, d.data)
+
+
+  // full screen editor
+  var setWindowSize = () => cm.setSize(innerWidth, innerHeight)
+  setWindowSize()
+  d3.select(window).on('resize', setWindowSize)
+
+
+})()
+
+
+// TODO check if file has updated
+
+
+
+
+
+
+
 
 </script>
+
+
 
 </article>

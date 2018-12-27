@@ -19,7 +19,7 @@
     "url": "https://github.com/1wheel/hot-server/issues"
   },
   "bin": {
-    "hot-server": "./index.js"
+    "hot-server-editor": "./index.js"
   },
   "homepage": "https://github.com/1wheel/hot-server#readme",
   "dependencies": {

@@ -1,0 +1,22 @@
+<!-- hot-server appends this snippit to inject code via a websock  -->
+<script>
+!(function(){
+
+	var bc = new BroadcastChannel('file_update')
+
+	bc.onmessage = msg => {
+	  var {path, type, str} = msg.data
+
+	  if (type == 'reload') location.reload()
+	  if (type == 'jsInject') eval(str)
+	  if (type == 'cssInject') {
+	  	// TODO set inner text to skip network request
+	    Array.from(document.querySelectorAll('link'))
+	      .filter(d => d.href.includes(path))
+	      .forEach(d => d.href = d.href)
+	  }
+	}
+
+
+})()
+</script>
