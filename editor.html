@@ -1,0 +1,31 @@
+<textarea id='editor-text-area'></textarea>
+
+
+<link rel="stylesheet" href="third_party/codemirror-5.42.2/codemirror.css">
+<style type="text/css">
+	textarea{
+		width: 100vw;
+		height: 100vh;
+	}
+
+  body{
+    margin: 0px;
+  }
+
+</style>
+
+<script src="third_party/codemirror-5.42.2/codemirror.js"></script>
+<script src="third_party/codemirror-5.42.2/sublime.js"></script>
+<script>
+  var editor = CodeMirror.fromTextArea(document.querySelector('#editor-text-area'), {
+    value: '<h1>hello editor</h1>',
+    lineNumbers: true,
+    mode: "javascript",
+    keyMap: "sublime",
+    autoCloseBrackets: true,
+    matchBrackets: true,
+    showCursorWhenSelecting: true,
+    theme: "monokai",
+    tabSize: 2
+  })
+</script>

@@ -1,5 +1,5 @@
 {
-  "name": "hot-server",
+  "name": "hot-server-editor",
   "version": "0.0.16",
   "description": "live-server with script injection",
   "main": "index.js",
