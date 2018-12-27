@@ -1,24 +1,50 @@
-<textarea id='editor-text-area'></textarea>
+<!doctype html>
+
+<title>loading...</title>
+<meta charset="utf-8"/>
+
+<link rel="stylesheet" href="node_modules/codemirror/lib/codemirror.css">
+<link rel="stylesheet" href="node_modules/codemirror/addon/fold/foldgutter.css">
+<link rel="stylesheet" href="node_modules/codemirror/addon/dialog/dialog.css">
+<link rel="stylesheet" href="node_modules/codemirror/theme/monokai.css">
+
+<script src="node_modules/codemirror/lib/codemirror.js"></script>
+<script src="node_modules/codemirror/addon/search/searchcursor.js"></script>
+<script src="node_modules/codemirror/addon/search/search.js"></script>
+<script src="node_modules/codemirror/addon/dialog/dialog.js"></script>
+<script src="node_modules/codemirror/addon/edit/matchbrackets.js"></script>
+<script src="node_modules/codemirror/addon/edit/closebrackets.js"></script>
+<script src="node_modules/codemirror/addon/comment/comment.js"></script>
+<script src="node_modules/codemirror/addon/wrap/hardwrap.js"></script>
+<script src="node_modules/codemirror/addon/fold/foldcode.js"></script>
+<script src="node_modules/codemirror/addon/fold/brace-fold.js"></script>
+<script src="node_modules/codemirror/mode/javascript/javascript.js"></script>
+<script src="node_modules/codemirror/keymap/sublime.js"></script>
 
 
-<link rel="stylesheet" href="third_party/codemirror-5.42.2/codemirror.css">
-<style type="text/css">
-	textarea{
-		width: 100vw;
-		height: 100vh;
-	}
-
-  body{
+<script src="https://roadtolarissa.com/worlds-group-2017/d3_.js"></script>
+<style>
+  html, body{
     margin: 0px;
+    width: 100%;
+    height: 100%;
   }
 
+  #code-container{
+    width: 100vw;
+    height: 100%;
+  }
+
+  .CodeMirror-linenumbers { padding: 0 8px; }
 </style>
 
-<script src="third_party/codemirror-5.42.2/codemirror.js"></script>
-<script src="third_party/codemirror-5.42.2/sublime.js"></script>
+
+<div id='code-container'></div>
+
 <script>
-  var editor = CodeMirror.fromTextArea(document.querySelector('#editor-text-area'), {
-    value: '<h1>hello editor</h1>',
+  var value = "// The bindings defined specifically in the Sublime Text mode\nvar bindings = {\n}";
+  var cm = CodeMirror(d3.select('#code-container').node(), {
+    value: value,
     lineNumbers: true,
     mode: "javascript",
     keyMap: "sublime",
@@ -27,5 +53,8 @@
     showCursorWhenSelecting: true,
     theme: "monokai",
     tabSize: 2
-  })
+  });
+
 </script>
+
+</article>
