@@ -19,6 +19,8 @@
 <script src="node_modules/codemirror/addon/fold/foldcode.js"></script>
 <script src="node_modules/codemirror/addon/fold/brace-fold.js"></script>
 <script src="node_modules/codemirror/mode/javascript/javascript.js"></script>
+<script src="node_modules/codemirror/mode/css/css.js"></script>
+<script src="node_modules/codemirror/mode/htmlmixed/htmlmixed.js"></script>
 <script src="node_modules/codemirror/keymap/sublime.js"></script>
 
 
@@ -56,20 +58,34 @@
 
   console.log('loaded file')
 
-  var type = _.last(path.split('.'))
   var fileName = _.last(path.split('/'))
   d3.select('title').text(fileName)
+
+  var type = _.last(path.split('.'))
+  var mode = type == 'js' ? 'javascript' : 
+    type == 'html' ? 'htmlmixed' :
+    type == 'css' ? 'css' : ''
+  // TODO HTML mode not loading
+
+  if (type == 'html'){
+    var htmlInject = await(await fetch('/html-inject.html')).text()
+    value = value.replace(htmlInject, '')
+  }
+
+  console.log({mode})
 
   var cm = CodeMirror(d3.select('#code-container').node(), {
     value,
     lineNumbers: true,
-    mode: "javascript", // TODO html/css
-    keyMap: "sublime",
+    mode,
+    keyMap: 'sublime',
     autoCloseBrackets: true,
     matchBrackets: true,
     showCursorWhenSelecting: true,
-    theme: "mbo",
-    tabSize: 2
+    theme: 'mbo',
+    tabSize: 2,
+    lineWrapping: true,
+    autofocus: true,
   })
 
   // send update on save
@@ -86,12 +102,12 @@
 
     // write to disk
 
-    fetch("/save", {
-      method: "POST",
+    fetch('/save', {
+      method: 'POST',
       body: JSON.stringify(msg)
     })
 
-    // TODO only remove changed title after  
+    // TODO only remove changed title after success
   })
 
   bc.onmessage = d => console.log(d, d.data)
@@ -106,7 +122,7 @@
 })()
 
 
-// TODO check if file has updated
+// TODO check if file has updated outside of editor and alert
 
 
 

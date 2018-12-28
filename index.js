@@ -34,6 +34,9 @@ var server = express()
     if (path.includes('hot-editor.html')){
       return res.send(fs.readFileSync(__dirname + '/hot-editor.html', 'utf8'))
     }
+    if (path.includes('html-inject.html')){
+      return res.send(fs.readFileSync(__dirname + '/html-inject.html', 'utf8'))
+    }
     if (path.includes('node_modules/codemirror/')){
       if (path.includes('.css')) res.contentType('text/css; charset=UTF-8')
       return res.send(fs.readFileSync(__dirname + '/' + path))
@@ -54,10 +57,10 @@ var server = express()
   })
   .use(serveStatic('./'))
   .use('/', serveIndex('./'))
-  .listen(PORT)
+  .listen(PORT, 'localhost')
   .on('listening', () => {
     var url = 'http://localhost:' + PORT
-    var editUrl = url + '/hot-editor.html?hotEditorPath=index.js'
+    var editUrl = url + '/hot-editor.html?hotEditorPath=_script.js'
     console.log('hot-server: ' + editUrl)
     console.log('hot-server-editor: ' + editUrl)
 
@@ -67,15 +70,15 @@ var server = express()
 //inc PORT if in use
 process.on('uncaughtException', err => {
   console.log({err})
-  if (err.errno == 'EADDRINUSE') server.listen(++PORT)
+  if (err.errno == 'EADDRINUSE') server.listen(++PORT, 'localhost')
 })
 
 
 
 // 
 
-// var result = querystring.stringify({hotEditorPath: "_script.js"})
-// console.log(result)
+var result = querystring.stringify({hotEditorPath: "01-folder/_script.js"})
+console.log(result)
 
 
 
