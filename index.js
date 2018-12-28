@@ -36,13 +36,13 @@ var server = express()
     var path = req.params[0].slice(1)
     
     // server editor.html with node paths
-    // if (path.includes('hot-editor.html')){
-    //   return res.send(fs.readFileSync(__dirname + '/hot-editor.html', 'utf8'))
-    // }
-    // if (path.includes('node_modules/codemirror/')){
-    //   res.contentType(path)
-    //   return res.send(fs.readFileSync(__dirname + '/' + path))
-    // }
+    if (path.includes('hot-editor.html')){
+      return res.send(fs.readFileSync(__dirname + '/hot-editor.html', 'utf8'))
+    }
+    if (path.includes('node_modules/codemirror/')){
+      // res.contentType(path)
+      // return res.send(fs.readFileSync(__dirname + '/' + path))
+    }
 
     // append injecter script to all html pages served
     try{
@@ -58,9 +58,11 @@ var server = express()
   .listen(PORT)
   .on('listening', () => {
     var url = 'http://localhost:' + PORT
-    child.exec('open ' + url)
-    console.log('hot-server: ' + url)
-    console.log(url + '/hot-editor?hotEditorPath=_script.js')
+    var editUrl = url + '/hot-editor?hotEditorPath=index.js'
+    console.log('hot-server: ' + edit)
+    console.log('hot-server-editor: ' + editUrl)
+
+    child.exec('open ' + editUrl)
   })
   
 process.on('uncaughtException', (err => 
