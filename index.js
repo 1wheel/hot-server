@@ -9,18 +9,13 @@ var querystring = require("querystring")
 
 var PORT = require('minimist')(process.argv.slice(2)).port || 3989
 
-var injectHTML = fs.readFileSync(__dirname + '/inject.html', 'utf8')
-
 // TODO limit to localhost
 // TODO how does ssh port forwarding work?
 
 // set up express static server with a websocket
 var server = express()
-  // .get('hot-editor.html', (req, res, next) => {
-    
-  // })
-  // save files that are changed
   .post('/save', (req, res, next) => {
+    // save files that are changed
     var bodyStr = ''
     req
       .on('data', d => bodyStr += d )
@@ -40,8 +35,8 @@ var server = express()
       return res.send(fs.readFileSync(__dirname + '/hot-editor.html', 'utf8'))
     }
     if (path.includes('node_modules/codemirror/')){
-      // res.contentType(path)
-      // return res.send(fs.readFileSync(__dirname + '/' + path))
+      if (path.includes('.css')) res.contentType('text/css; charset=UTF-8')
+      return res.send(fs.readFileSync(__dirname + '/' + path))
     }
 
     // append injecter script to all html pages served
@@ -50,7 +45,11 @@ var server = express()
       if (path == '') path = 'index.html'
       if (path.slice(-5) != '.html') return next()
 
-      return res.send(fs.readFileSync(path, 'utf-8') + injectHTML)
+      return res.send(
+        fs.readFileSync(path, 'utf-8') +
+        fs.readFileSync(__dirname + '/html-inject.html', 'utf8')
+      )
+
     } catch(e){ next() }
   })
   .use(serveStatic('./'))
@@ -58,15 +57,18 @@ var server = express()
   .listen(PORT)
   .on('listening', () => {
     var url = 'http://localhost:' + PORT
-    var editUrl = url + '/hot-editor?hotEditorPath=index.js'
-    console.log('hot-server: ' + edit)
+    var editUrl = url + '/hot-editor.html?hotEditorPath=index.js'
+    console.log('hot-server: ' + editUrl)
     console.log('hot-server-editor: ' + editUrl)
 
-    child.exec('open ' + editUrl)
+    // child.exec('open ' + editUrl)
   })
   
-process.on('uncaughtException', (err => 
-  err.errno == 'EADDRINUSE' ? server.listen(++PORT) : 0)) //inc PORT if in use
+//inc PORT if in use
+process.on('uncaughtException', err => {
+  console.log({err})
+  if (err.errno == 'EADDRINUSE') server.listen(++PORT)
+})
 
 
 
