@@ -5,15 +5,19 @@
 	var bc = new BroadcastChannel('file_update')
 
 	bc.onmessage = msg => {
+		console.log({msg})
 	  var {path, type, str} = msg.data
 
-	  if (type == 'reload') location.reload()
-	  if (type == 'jsInject') eval(str)
-	  if (type == 'cssInject') {
+	  if (type == 'js'){
+	  	eval(str)
+	  }
+	  else if (type == 'css') {
 	  	// TODO set inner text to skip network request
 	    Array.from(document.querySelectorAll('link'))
 	      .filter(d => d.href.includes(path))
 	      .forEach(d => d.href = d.href)
+	  } else {
+	  	location.reload()
 	  }
 	}
 

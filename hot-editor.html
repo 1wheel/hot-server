@@ -36,6 +36,10 @@
   }
 
   .CodeMirror-linenumbers { padding: 0 8px; }
+
+  .cm-s-mbo .CodeMirror-gutters {
+    background: #2c2c2c;
+  }
 </style>
 
 
@@ -47,13 +51,14 @@
 
   var path = (new URLSearchParams(window.location.search)).get('hotEditorPath')
   if (!path) path = 'https://roadtolarissa.com/worlds-group-2018/script.js'
-  console.log({path})
 
   var value = await(await fetch(path)).text()
 
-  console.log({value})
+  console.log('loaded file')
 
   var type = _.last(path.split('.'))
+  var fileName = _.last(path.split('/'))
+  d3.select('title').text(fileName)
 
   var cm = CodeMirror(d3.select('#code-container').node(), {
     value,
