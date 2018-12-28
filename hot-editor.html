@@ -51,6 +51,8 @@
 
   var value = await(await fetch(path)).text()
 
+  console.log({value})
+
   var type = _.last(path.split('.'))
 
   var cm = CodeMirror(d3.select('#code-container').node(), {
