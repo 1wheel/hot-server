@@ -59,26 +59,25 @@ var server = express()
   .use('/', serveIndex('./'))
   .listen(PORT, 'localhost')
   .on('listening', () => {
-    var url = 'http://localhost:' + PORT
-    var editUrl = url + '/hot-editor.html?hotEditorPath=_script.js'
-    console.log('hot-server: ' + editUrl)
-    console.log('hot-server-editor: ' + editUrl)
-
-    // child.exec('open ' + editUrl)
+    logPorts()
   })
   
 //inc PORT if in use
 process.on('uncaughtException', err => {
-  console.log({err})
-  if (err.errno == 'EADDRINUSE') server.listen(++PORT, 'localhost')
+  if (err.errno == 'EADDRINUSE'){
+    server.listen(++PORT, 'localhost')
+  }
 })
 
 
+function logPorts(){
+  var url = 'http://localhost:' + PORT
+  var editUrl = url + '/hot-editor.html' + querystring.stringify({hotEditorPath: "01-folder/_script.js"})
+  console.log('hot-server: ' + url)
+  console.log('hot-server-editor: ' + editUrl)
+}
 
-// 
 
-var result = querystring.stringify({hotEditorPath: "01-folder/_script.js"})
-console.log(result)
 
 
 
