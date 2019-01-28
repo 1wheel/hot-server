@@ -5,7 +5,8 @@ var serveIndex = require('serve-index')
 var fs = require('fs')
 var chokidar = require('chokidar')
 var child = require('child_process')
-var querystring = require("querystring")
+var querystring = require('querystring')
+var glob = require('glob')
 
 var PORT = require('minimist')(process.argv.slice(2)).port || 3989
 
@@ -33,6 +34,10 @@ var server = express()
     // server editor.html with node paths
     if (path.includes('hot-editor.html')){
       return res.send(fs.readFileSync(__dirname + '/hot-editor.html', 'utf8'))
+    }
+    if (path.includes('hot-editor-files.json')){
+      var files = glob.sync('**/*', {"ignore":['.git', 'node_modules']})
+      return res.send(JSON.stringify(files))
     }
     if (path.includes('html-inject.html')){
       return res.send(fs.readFileSync(__dirname + '/html-inject.html', 'utf8'))
@@ -66,15 +71,17 @@ var server = express()
 process.on('uncaughtException', err => {
   if (err.errno == 'EADDRINUSE'){
     server.listen(++PORT, 'localhost')
+  } else {
+    console.log(err)
   }
 })
 
 
 function logPorts(){
   var url = 'http://localhost:' + PORT
-  var editUrl = url + '/hot-editor.html' + querystring.stringify({hotEditorPath: "01-folder/_script.js"})
-  console.log('hot-server: ' + url)
-  console.log('hot-server-editor: ' + editUrl)
+  console.log('view: ' + url)
+  console.log('edit: ' + url + '/hot-editor.html')
+
 }
 
 

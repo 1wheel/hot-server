@@ -52,7 +52,7 @@
 !(async function(){
 
   var path = (new URLSearchParams(window.location.search)).get('hotEditorPath')
-  if (!path) path = 'https://roadtolarissa.com/worlds-group-2018/script.js'
+  if (!path) return displayFileList()
 
   var value = await(await fetch(path)).text()
 
@@ -117,9 +117,24 @@
   var setWindowSize = () => cm.setSize(innerWidth, innerHeight)
   setWindowSize()
   d3.select(window).on('resize', setWindowSize)
-
-
 })()
+
+
+async function displayFileList(){
+  var files = await(await fetch('hot-editor-files.json')).json()
+
+  d3.select('body').html('')
+    .st({margin: 10, marginBottom: 100, fontFamily: 'monospace'})
+    .appendMany('div', files)
+    .st({marginTop: d => d.includes('.') ? 0 : 10})
+    .append('a')
+    .text(d => d)
+    // .st({fontWeight: d => d.includes('.') ? 400 : 600 })
+    .filter(d => d.includes('.'))
+    .at({href: d => '/hot-editor.html?hotEditorPath=' + encodeURIComponent(d) })
+
+  console.log(files)
+}
 
 
 // TODO check if file has updated outside of editor and alert
