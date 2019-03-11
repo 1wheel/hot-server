@@ -120,8 +120,10 @@
 })()
 
 
-async function displayFileList(){
+async function displayFileList(showNodeModules){
   var files = await(await fetch('hot-editor-files.json')).json()
+
+  if (!showNodeModules) files = files.filter(d => !d.includes('node_modules'))
 
   d3.select('body').html('')
     .st({margin: 10, marginBottom: 100, fontFamily: 'monospace'})
