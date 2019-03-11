@@ -42,6 +42,12 @@
   .cm-s-mbo .CodeMirror-gutters {
     background: #2c2c2c;
   }
+
+  .cm-tab {
+    background-position: right;
+    background-repeat: no-repeat;
+    border-left: 1px solid silver;
+  }
 </style>
 
 
@@ -86,6 +92,12 @@
     tabSize: 2,
     lineWrapping: true,
     autofocus: true,
+    extraKeys: {
+      Tab: function(cm) {
+        var spaces = Array(cm.getOption("indentUnit") + 1).join(" ");
+        cm.replaceSelection(spaces);
+      }
+    },
   })
 
   // send update on save
@@ -135,7 +147,7 @@ async function displayFileList(showNodeModules){
     .filter(d => d.includes('.'))
     .at({href: d => '/hot-editor.html?hotEditorPath=' + encodeURIComponent(d) })
 
-  console.log(files)
+  d3.select('title').text('hse file list')
 }
 
 
