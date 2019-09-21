@@ -14,7 +14,10 @@ var server = express()
   .use(serveStatic('./'))
   .use('/', serveIndex('./'))
   .listen(PORT)
-  .on('listening', () => child.exec('open http://localhost:' + PORT))
+  .on('listening', () => {
+    child.exec('open http://localhost:' + PORT)
+    console.log('hot-server http://localhost:' + PORT)
+  })
   
 process.on('uncaughtException', (err => 
   err.errno == 'EADDRINUSE' ? server.listen(++PORT) : 0)) //inc PORT if in use
