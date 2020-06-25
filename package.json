@@ -1,6 +1,6 @@
 {
   "name": "hot-server-editor",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "description": "live-server with script injection",
   "main": "index.js",
   "scripts": {
@@ -23,7 +23,7 @@
   },
   "homepage": "https://github.com/1wheel/hot-server#readme",
   "dependencies": {
-    "chokidar": "^1.6.0",
+    "chokidar": "^3.0.0",
     "codemirror": "^5.42.2",
     "express": "^4.16.4",
     "minimist": "^1.2.0",
