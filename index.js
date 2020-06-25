@@ -10,9 +10,6 @@ var glob = require('glob')
 
 var PORT = require('minimist')(process.argv.slice(2)).port || 3989
 
-// TODO limit to localhost
-// TODO how does ssh port forwarding work?
-
 // set up express static server with a websocket
 var server = express()
   .post('/save', (req, res, next) => {
