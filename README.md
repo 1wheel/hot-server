@@ -30,7 +30,7 @@ To persist data between refreshes, declare and initialize your data in a separat
 
 Default port is 3989; `hot-server --port=4444` sets the port.
 
-`hot-server --dir=build` set the directory to server.  
+`hot-server --dir=build` set the directory to serve.  
 
 ## Is this the right tool for me?
 
