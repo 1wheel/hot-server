@@ -6,21 +6,25 @@ var SocketServer = require('ws').Server
 var fs = require('fs')
 var chokidar = require('chokidar')
 var child = require('child_process')
-var PORT = require('minimist')(process.argv.slice(2)).port || 3989
+
+var defaults = {port: 3989, dir: './'} 
+var args = require('minimist')(process.argv.slice(2))
+var {port, dir} = Object.assign(defaults, args)
+dir = require('path').resolve(dir) + '/'
 
 // set up express static server with a websocket
 var server = express()
   .get('*', injectHTML)
-  .use(serveStatic('./'))
-  .use('/', serveIndex('./'))
-  .listen(PORT)
+  .use(serveStatic(dir))
+  .use('/', serveIndex(dir))
+  .listen(port)
   .on('listening', () => {
-    child.exec('open http://localhost:' + PORT)
-    console.log('hot-server http://localhost:' + PORT)
+    child.exec('open http://localhost:' + port)
+    console.log('hot-server http://localhost:' + port)
   })
   
 process.on('uncaughtException', (err => 
-  err.errno == 'EADDRINUSE' ? server.listen(++PORT) : 0)) //inc PORT if in use
+  err.errno == 'EADDRINUSE' ? server.listen(++port) : 0)) //inc port if in use
 
 // append websocket/injecter script to all html pages served
 var wsInject = fs.readFileSync(__dirname + '/ws-inject.html', 'utf8')
@@ -31,14 +35,14 @@ function injectHTML(req, res, next){
     if (path == '') path = 'index.html'
     if (path.slice(-5) != '.html') return next()
 
-    res.send(fs.readFileSync(path, 'utf-8') + wsInject)
+    res.send(fs.readFileSync(dir + path, 'utf-8') + wsInject)
   } catch(e){ next() }
 }
 
 // if a .js or .css files changes, load and send to client via websocket
 var wss = new SocketServer({server})
 chokidar
-  .watch('.', {ignored: /node_modules|\.git|[\/\\]\./ })
+  .watch(dir, {ignored: /node_modules|\.git|[\/\\]\./ })
   .on('change', path => {
     var str = fs.readFileSync(path, 'utf8')
     var path = '/' + path.replace(__dirname, '')
