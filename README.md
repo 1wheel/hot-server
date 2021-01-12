@@ -24,13 +24,13 @@ Since your whole script file reruns, you'll probably want to clean up anything i
 To persist data between refreshes, declare and initialize your data in a separate file from the rest of your code. Only the changed file will rerun. Or only initialize your data on the first run:
 
     window.points = window.points || d3.range(50)
-        .map(function(d){
-          return [Math.random() * width, Math.random() * height]
-        })
+        .map(d => [Math.random()*width, Math.random()*height])
 
 Default port is 3989; `hot-server --port=4444` sets the port.
 
 `hot-server --dir=build` sets the directory to serve.  
+
+`hot-server --ignore=data-raw` skips watching a folder.
 
 ## Is this the right tool for me?
 
@@ -47,4 +47,4 @@ Or a even a different language:
 
 But! If you're mostly working on [short, simple pieces](http://roadtolarissa.com/) and dislike yak shaving config files this might be a good fit. It is as simple to use as `python -m http.server` with the added benefit of seemly magically updating pages without a refresh.  
 
-The implementation is also simple—just 50 lines of code for the server and 10 for the client—and you might be able to re-purpose it. I incorporated a modified version into a slow `make/requirejs/grunt` build system and reduced the time it took to see the result of changing my code from ~6 seconds to 0. 
+The implementation is also simple—just 60 lines of code for the server and 10 for the client—and you might be able to re-purpose it. I incorporated a modified version into a slow `make/requirejs/grunt` build system and reduced the time it took to see the result of changing my code from ~6 seconds to 0. 

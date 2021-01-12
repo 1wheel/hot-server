@@ -7,9 +7,9 @@ var fs = require('fs')
 var chokidar = require('chokidar')
 var child = require('child_process')
 
-var defaults = {port: 3989, dir: './'} 
+var defaults = {port: 3989, dir: './', ignore: 'hs-ignore-dir'} 
 var args = require('minimist')(process.argv.slice(2))
-var {port, dir} = Object.assign(defaults, args)
+var {port, dir, ignore} = Object.assign(defaults, args)
 dir = require('path').resolve(dir) + '/'
 
 // set up express static server with a websocket
@@ -41,9 +41,11 @@ function injectHTML(req, res, next){
 
 // if a .js or .css files changes, load and send to client via websocket
 var wss = new SocketServer({server})
+var ignored = new RegExp(`${ignore}|` + /node_modules|\.git|[\/\\]\./.source)
 chokidar
-  .watch(dir, {ignored: /node_modules|\.git|[\/\\]\./ })
+  .watch(dir, {ignored})
   .on('change', path => {
+    console.log(path)
     var str = fs.readFileSync(path, 'utf8')
     var path = '/' + path.replace(__dirname, '')
 
@@ -54,3 +56,4 @@ chokidar
     var msg = {path, type, str}
     wss.clients.forEach(d => d.send(JSON.stringify(msg)))
   })
+
