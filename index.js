@@ -23,8 +23,10 @@ var server = express()
     console.log('hot-server http://localhost:' + port)
   })
   
-process.on('uncaughtException', (err => 
-  err.errno == 'EADDRINUSE' ? server.listen(++port) : 0)) //inc port if in use
+//inc port if in use
+process.on('uncaughtException', err => {
+  ;[err.errno, err.code].includes('EADDRINUSE') ? server.listen(++port) : 0
+})
 
 // append websocket/injecter script to all html pages served
 var wsInject = fs.readFileSync(__dirname + '/ws-inject.html', 'utf8')
