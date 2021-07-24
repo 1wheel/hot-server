@@ -1,6 +1,6 @@
 {
   "name": "hot-server",
-  "version": "0.0.24",
+  "version": "0.0.25",
   "description": "live-server with script injection",
   "main": "index.js",
   "scripts": {
