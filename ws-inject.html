@@ -7,7 +7,7 @@ new WebSocket(location.origin.replace(/^http/, 'ws')).onmessage = msg => {
     location.reload()
   } else if (type == 'jsInject'){
     // Function is faster than eval but adds two extra lines at start of file
-    Function(str.replace('\n', ';').replace('\n', ';'))()
+    Function(str)()
     if (window.__onHotServer) window.__onHotServer({path, type, str})
   } else if (type == 'cssInject') {
     Array.from(document.querySelectorAll('link'))
