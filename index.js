@@ -2,6 +2,8 @@
 var express = require('express')
 var serveStatic = require('serve-static')
 var serveIndex = require('serve-index')
+var http = require('http')
+var https = require('https')
 var SocketServer = require('ws').Server
 var fs = require('fs')
 var chokidar = require('chokidar')
@@ -9,24 +11,14 @@ var child = require('child_process')
 
 var defaults = {port: 3989, dir: './', ignore: 'hs-ignore-dir'} 
 var args = require('minimist')(process.argv.slice(2))
-var {port, dir, ignore} = Object.assign(defaults, args)
+var {port, dir, ignore, cert} = Object.assign(defaults, args)
 dir = require('path').resolve(dir) + '/'
 
 // set up express static server with a websocket
-var server = express()
+var app = express()
   .get('*', injectHTML)
   .use(serveStatic(dir))
   .use('/', serveIndex(dir))
-  .listen(port)
-  .on('listening', () => {
-    child.exec('open http://localhost:' + port)
-    console.log('hot-server http://localhost:' + port)
-  })
-  
-//inc port if in use
-process.on('uncaughtException', err => {
-  ;[err.errno, err.code].includes('EADDRINUSE') ? server.listen(++port) : 0
-})
 
 // append websocket/injecter script to all html pages served
 var wsInject = fs.readFileSync(__dirname + '/ws-inject.html', 'utf8')
@@ -40,6 +32,26 @@ function injectHTML(req, res, next){
     res.send(fs.readFileSync(dir + path, 'utf-8') + wsInject)
   } catch(e){ next() }
 }
+
+// use https server if a cert file is passed in
+var server = http.createServer(app)
+cert = '../../cert/localhost.pem'
+if (cert){
+  var credentials = {cert: fs.readFileSync(cert), key: fs.readFileSync(cert.replace('.pem', '-key.pem'))}
+  server = https.createServer(credentials, app)
+} 
+
+server.listen(port).on('listening', () => {
+  var url = `http${cert ? 's' : ''}://localhost:${port}`
+  child.exec(`open ${url}`)
+  console.log(`hot-server ${url}`)
+})
+
+//inc port if in use
+process.on('uncaughtException', err => {
+  console.log(err)
+  ;[err.errno, err.code].includes('EADDRINUSE') ? server.listen(++port) : 0
+})
 
 // if a .js or .css files changes, load and send to client via websocket
 var wss = new SocketServer({server})

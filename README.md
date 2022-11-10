@@ -32,6 +32,8 @@ Default port is 3989; `hot-server --port=4444` sets the port.
 
 `hot-server --ignore=data-raw` skips watching a folder.
 
+`hot-server --cert=../../cert/localhost.pem` passes in a [certificate](https://web.dev/how-to-use-local-https/) and enables https. 
+
 ## Is this the right tool for me?
 
 If you're building an actual webapp, maybe not! This is a naive approach to hot reloading that will not work with more complicated code. [Webpack](https://webpack.js.org/) or [Parcel](https://parceljs.org/hmr.html) might be a better option: 
