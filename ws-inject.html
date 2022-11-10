@@ -6,6 +6,7 @@ new WebSocket(location.origin.replace(/^http/, 'ws')).onmessage = msg => {
   if (type == 'reload'){
     location.reload()
   } else if (type == 'jsInject'){
+    // console.clear() // enable with --consoleclear
     // Function is faster than eval but adds two extra lines at start of file
     Function(str)()
     if (window.__onHotServer) window.__onHotServer({path, type, str})

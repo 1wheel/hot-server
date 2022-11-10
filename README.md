@@ -32,6 +32,8 @@ Default port is 3989; `hot-server --port=4444` sets the port.
 
 `hot-server --ignore=data-raw` skips watching a folder.
 
+`hot-server --consoleclear` runs `console.clear()` after js files are changed.
+
 `hot-server --cert=../../cert/localhost.pem` passes in a [certificate](https://web.dev/how-to-use-local-https/) and enables https. 
 
 ## Is this the right tool for me?

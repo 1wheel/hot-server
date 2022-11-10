@@ -11,7 +11,7 @@ var child = require('child_process')
 
 var defaults = {port: 3989, dir: './', ignore: 'hs-ignore-dir'} 
 var args = require('minimist')(process.argv.slice(2))
-var {port, dir, ignore, cert} = Object.assign(defaults, args)
+var {port, dir, ignore, cert, consoleclear} = Object.assign(defaults, args)
 dir = require('path').resolve(dir) + '/'
 
 // set up express static server with a websocket
@@ -22,6 +22,7 @@ var app = express()
 
 // append websocket/injecter script to all html pages served
 var wsInject = fs.readFileSync(__dirname + '/ws-inject.html', 'utf8')
+if (consoleclear) wsInject = wsInject.replace('// console.clear()', 'console.clear()')
 function injectHTML(req, res, next){
   try{
     var path = req.params[0].slice(1)
@@ -35,7 +36,6 @@ function injectHTML(req, res, next){
 
 // use https server if a cert file is passed in
 var server = http.createServer(app)
-cert = '../../cert/localhost.pem'
 if (cert){
   var credentials = {cert: fs.readFileSync(cert), key: fs.readFileSync(cert.replace('.pem', '-key.pem'))}
   server = https.createServer(credentials, app)
